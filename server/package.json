@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "description": "Simple chat app built with node.js and socket.io",
+  "description": "Aster Server",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ngrt/simpleChatApp.git"
+    "url": "git+https://github.com/LizzardMedeiros/asteroids"
   },
-  "author": "Noufel Gouirhate",
-  "license": "ISC",
+  "author": "LizzardMedeiros",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ngrt/simpleChatApp/issues"
+    "url": ""
   },
-  "homepage": "http://play.nanominer.online/",
+  "homepage": "",
   "dependencies": {
     "axios": "^0.19.1",
     "crypto-js": "^3.1.9-1",
