@@ -1,0 +1,16 @@
+{
+	"passoword": "vals2lu07",
+  "version": "02102020a",
+	"max_users": 10,
+	"max_aster_count": 50,
+	"max_aster_spd": 100,
+	"room_width": 5200,
+	"room_height": 5200,
+	"fps": 60,
+	"grid_size": 32,
+	"time_shot": 300,
+	"speed_shot": 800,
+	"life_shot": 1.3,
+	"web_price": 6e-8,
+	"hashes": 0
+}
