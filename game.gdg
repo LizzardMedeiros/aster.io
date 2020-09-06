@@ -185,16 +185,6 @@
                     <stringProperties />
                     <initialVariables />
                 </instance>
-                <instance angle="0.000000" customSize="false" height="0.000000" layer="HUD" locked="false" name="w_field" width="0.000000" x="256.000000" y="224.000000" zOrder="3">
-                    <numberProperties />
-                    <stringProperties />
-                    <initialVariables />
-                </instance>
-                <instance angle="0.000000" customSize="true" height="32.000000" layer="HUD" locked="false" name="w_input" width="23.000000" x="288.000000" y="256.000000" zOrder="4">
-                    <numberProperties />
-                    <stringProperties />
-                    <initialVariables />
-                </instance>
                 <instance angle="0.000000" customSize="false" height="0.000000" layer="HUD" locked="false" name="n_input" width="0.000000" x="288.000000" y="160.000000" zOrder="4">
                     <numberProperties />
                     <stringProperties />
@@ -534,14 +524,6 @@
                         </animation>
                     </animations>
                 </object>
-                <object bold="false" italic="false" name="w_input" smoothed="true" type="TextObject::Text" underlined="false">
-                    <variables />
-                    <behaviors />
-                    <string>asd</string>
-                    <font></font>
-                    <characterSize>13</characterSize>
-                    <color b="255" g="255" r="255" />
-                </object>
                 <object bold="false" italic="false" name="n_input" smoothed="true" type="TextObject::Text" underlined="false">
                     <variables />
                     <behaviors />
@@ -766,7 +748,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>variables = runtimeScene.getGame().getVariables();&#x0D;&#x0A;gs = variables.get(&quot;game_state&quot;);&#x0D;&#x0A;wallet = &quot;&quot;;&#x0D;&#x0A;nick = &quot;Skywalker&quot;;&#x0D;&#x0A;&#x0D;&#x0A;if (typeof(Storage) !== &quot;undefined&quot;)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;wallet = localStorage.wallet || wallet;&#x0D;&#x0A;&#x09;nick = localStorage.nick || nick;&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;runtimeScene.getObjects(&quot;w_input&quot;)[0].setString(wallet);&#x0D;&#x0A;runtimeScene.getObjects(&quot;n_input&quot;)[0].setString(nick);&#x0D;&#x0A;&#x0D;&#x0A;spr_aster = runtimeScene.getObjects(&quot;Asteroid&quot;);&#x0D;&#x0A;spr_aster.forEach(as =&gt; {&#x0D;&#x0A;&#x09;as.direction = Math.random() * 359;&#x0D;&#x0A;&#x09;as.speed = (Math.random()*6) - 3; &#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;if(_client.isRunning()) _client.stop();&#x0D;&#x0A;gs.setNumber(0);&#x0D;&#x0A;&#x0D;&#x0A;console.log(spr_aster[0]);</inlineCode>
+                            <inlineCode>const variables = runtimeScene.getGame().getVariables();&#x0D;&#x0A;const sprAster = runtimeScene.getObjects(&quot;Asteroid&quot;);&#x0D;&#x0A;const gs = variables.get(&quot;game_state&quot;);&#x0D;&#x0A;&#x0D;&#x0A;let nick = &quot;Skywalker&quot;;&#x0D;&#x0A;if (typeof(Storage) !== &quot;undefined&quot;) nick = localStorage.nick || nick;&#x0D;&#x0A;&#x0D;&#x0A;runtimeScene.getObjects(&quot;n_input&quot;)[0].setString(nick);&#x0D;&#x0A;&#x0D;&#x0A;sprAster.forEach((as) =&gt; {&#x0D;&#x0A;&#x09;as.direction = Math.random() * 359;&#x0D;&#x0A;&#x09;as.speed = ((Math.random() * 6) - 3); &#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;gs.setNumber(0);&#x0D;&#x0A;</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -846,7 +828,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var rw = variables.get(&quot;room_width&quot;);&#x0D;&#x0A;var rh = variables.get(&quot;room_height&quot;);&#x0D;&#x0A;var fps = variables.get(&quot;fps&quot;);&#x0D;&#x0A;var hv = variables.get(&quot;hash_value&quot;);&#x0D;&#x0A;&#x0D;&#x0A;var wrw = getWidth();&#x0D;&#x0A;var wrh = getHeight();&#x0D;&#x0A;&#x0D;&#x0A;//CONTROL PAINEL&#x0D;&#x0A;var spr_player = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;var arrow_l = runtimeScene.getObjects(&quot;ArrowLeft&quot;)[0];&#x0D;&#x0A;var arrow_r = runtimeScene.getObjects(&quot;ArrowRight&quot;)[0];&#x0D;&#x0A;var w_field = runtimeScene.getObjects(&quot;w_field&quot;)[0];&#x0D;&#x0A;var n_field = runtimeScene.getObjects(&quot;n_field&quot;)[0];&#x0D;&#x0A;var w_input = runtimeScene.getObjects(&quot;w_input&quot;)[0];&#x0D;&#x0A;var n_input = runtimeScene.getObjects(&quot;n_input&quot;)[0];&#x0D;&#x0A;var btn_start = runtimeScene.getObjects(&quot;btn_start&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;var cx = wrw/2;&#x0D;&#x0A;var cy = wrh/2;&#x0D;&#x0A;&#x0D;&#x0A;spr_player.setPosition(cx - (spr_player.getWidth()/2), cy - (spr_player.getHeight()/2) + 60);&#x0D;&#x0A;arrow_l.setPosition(cx - 192, cy + 60);&#x0D;&#x0A;arrow_r.setPosition(cx + 160, cy + 60);&#x0D;&#x0A;w_field.setPosition(cx - (w_field.getWidth()/2), cy - w_field.getHeight() - 80);&#x0D;&#x0A;w_input.setPosition(w_field.getX() + 32, w_field.getY() + 40);&#x0D;&#x0A;n_field.setPosition(cx - (n_field.getWidth()/2), w_field.getY() - 96);&#x0D;&#x0A;n_input.setPosition(n_field.getX() + 32, n_field.getY() + 34);&#x0D;&#x0A;&#x0D;&#x0A;n_field.setAnimationFrame((n_input.getString().length &gt; 1) ? 1 : 0);&#x0D;&#x0A;w_field.setAnimationFrame(checkAddr(w_input.getString()) ? 1 : 0);&#x0D;&#x0A;&#x0D;&#x0A;var cond1 = n_input.getString().length &lt; 1;&#x0D;&#x0A;var cond2 = !checkAddr(w_input.getString());&#x0D;&#x0A;&#x0D;&#x0A;if(cond1 || cond2) btn_start.setAnimationFrame(0);&#x0D;&#x0A;else btn_start.setAnimationFrame(1);&#x0D;&#x0A;&#x0D;&#x0A;spr_aster.forEach(as =&gt; {&#x0D;&#x0A;&#x09;as.setX(as.getX() + (as.speed * Math.sin(Math.degrees(as.direction))));&#x0D;&#x0A;&#x09;as.setY(as.getY() - (as.speed * Math.cos(Math.degrees(as.direction))));&#x0D;&#x0A;&#x09;if(as.getX() + as.getWidth() &lt; 0) as.setX(wrw);&#x0D;&#x0A;&#x09;if(as.getX() - as.getWidth() &gt; wrw) as.setX(0);&#x0D;&#x0A;&#x09;if(as.getY() + as.getHeight() &lt; 0) as.setY(wrh);&#x0D;&#x0A;&#x09;if(as.getY() - as.getHeight() &gt; wrh) as.setY(0);&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;socket.on(socket.id, function(server){&#x0D;&#x0A;&#x09;if(server.version == variables.get(&quot;version&quot;).getAsString())&#x0D;&#x0A;&#x09;{&#x0D;&#x0A;&#x09;&#x09;gs.setNumber(server.state);&#x0D;&#x0A;&#x09;&#x09;rw.setNumber(server.room_width);&#x0D;&#x0A;&#x09;&#x09;rh.setNumber(server.room_height);&#x0D;&#x0A;&#x09;&#x09;hv.setNumber(server.hash_value);&#x0D;&#x0A;&#x09;&#x09;fps.setNumber(server.fps);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;window.confirm(&quot;A versão do seu jogo está obsoleta!\nLimpe o cache do seu navegador e atualize a página.&quot;);&#x0D;&#x0A;&#x09;&#x09;location.reload();&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});</inlineCode>
+                            <inlineCode>const variables = runtimeScene.getGame().getVariables();&#x0D;&#x0A;const gs = variables.get(&quot;game_state&quot;);&#x0D;&#x0A;&#x0D;&#x0A;const roomWidth = variables.get(&apos;room_width&apos;);&#x0D;&#x0A;const roomHeight = variables.get(&apos;room_height&apos;);&#x0D;&#x0A;&#x0D;&#x0A;const screenWidth = runtimeScene.getObjects(&quot;Background&quot;)[0].getWidth();&#x0D;&#x0A;const screenHeight = runtimeScene.getObjects(&quot;Background&quot;)[0].getHeight();&#x0D;&#x0A;const fps = variables.get(&quot;fps&quot;);&#x0D;&#x0A;&#x0D;&#x0A;const _ACTIVE_ = 0;&#x0D;&#x0A;const _INACTIVE_ = 1;&#x0D;&#x0A;&#x0D;&#x0A;//CONTROL PAINEL&#x0D;&#x0A;const sprPlayer = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;const sprAster = runtimeScene.getObjects(&quot;Asteroid&quot;);&#x0D;&#x0A;const arrowLeft = runtimeScene.getObjects(&quot;ArrowLeft&quot;)[0];&#x0D;&#x0A;const arrowRight = runtimeScene.getObjects(&quot;ArrowRight&quot;)[0];&#x0D;&#x0A;const nField = runtimeScene.getObjects(&quot;n_field&quot;)[0];&#x0D;&#x0A;const nInput = runtimeScene.getObjects(&quot;n_input&quot;)[0];&#x0D;&#x0A;const btnStart = runtimeScene.getObjects(&quot;btn_start&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;const center = {&#x0D;&#x0A;&#x09;x: screenWidth / 2,&#x0D;&#x0A;&#x09;y: screenHeight / 2&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;sprPlayer.setPosition(center.x - (sprPlayer.getWidth() / 2), center.y - (sprPlayer.getHeight() / 2) + 60);&#x0D;&#x0A;arrowLeft.setPosition(center.x - 192, center.y + 60);&#x0D;&#x0A;arrowRight.setPosition(center.x + 160, center.y + 60);&#x0D;&#x0A;nField.setPosition(center.x - (nField.getWidth()/2), 96);&#x0D;&#x0A;nInput.setPosition(nField.getX() + 32, nField.getY() + 34);&#x0D;&#x0A;&#x0D;&#x0A;nField.setAnimationFrame((nInput.getString().length &gt; 1) ? 1 : 0);&#x0D;&#x0A;&#x0D;&#x0A;if( nInput.getString().length &lt; 1) btnStart.setAnimationFrame(_ACTIVE_);&#x0D;&#x0A;else btnStart.setAnimationFrame(_INACTIVE_);&#x0D;&#x0A;&#x0D;&#x0A;sprAster.forEach(as =&gt; {&#x0D;&#x0A;  const xx = as.getX() + (as.speed * Math.sin(Math.degrees(as.direction)));&#x0D;&#x0A;  const yy = as.getY() + (as.speed * Math.cos(Math.degrees(as.direction)));&#x0D;&#x0A;  as.setX(&#x0D;&#x0A;    (xx &gt; screenWidth) ? -as.getWidth() :&#x0D;&#x0A;      (xx + as.getWidth() &lt; 0) ? screenWidth : xx&#x0D;&#x0A;  );&#x0D;&#x0A;  as.setY(&#x0D;&#x0A;    (yy &gt; screenHeight) ? -as.getHeight() :&#x0D;&#x0A;      (yy + as.getHeight() &lt; 0) ? screenHeight : yy&#x0D;&#x0A;  );&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;socket.on(socket.id, function(server){&#x0D;&#x0A;&#x09;if (server.version == variables.get(&quot;version&quot;).getAsString()) {&#x0D;&#x0A;&#x09;&#x09;gs.setNumber(server.state);&#x0D;&#x0A;&#x09;&#x09;roomWidth.setNumber(server.room_width);&#x0D;&#x0A;&#x09;&#x09;roomHeight.setNumber(server.room_height);&#x0D;&#x0A;&#x09;&#x09;fps.setNumber(server.fps);&#x0D;&#x0A;&#x09;} else {&#x0D;&#x0A;&#x09;&#x09;window.confirm(&quot;A versão do seu jogo está obsoleta!\nLimpe o cache do seu navegador e atualize a página.&quot;);&#x0D;&#x0A;&#x09;&#x09;location.reload();&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -903,7 +885,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var spr_player = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;var cframe = spr_player.getAnimationFrame();&#x0D;&#x0A;var nframe = cframe == 0 ? 1 : --cframe;&#x0D;&#x0A;&#x0D;&#x0A;spr_player.setAnimationFrame(nframe);</inlineCode>
+                            <inlineCode>const sprPlayer = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;let cFrame = sprPlayer.getAnimationFrame();&#x0D;&#x0A;const nFrame = cFrame == 0 ? 1 : --cFrame;&#x0D;&#x0A;&#x0D;&#x0A;sprPlayer.setAnimationFrame(nFrame);</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -934,38 +916,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var spr_player = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;var cframe = spr_player.getAnimationFrame();&#x0D;&#x0A;var nframe = cframe == 1 ? 0 : ++cframe;&#x0D;&#x0A;&#x0D;&#x0A;spr_player.setAnimationFrame(nframe);&#x0A;</inlineCode>
-                            <parameterObjects></parameterObjects>
-                        </event>
-                    </events>
-                </event>
-                <event disabled="false" folded="true">
-                    <type>BuiltinCommonInstructions::Standard</type>
-                    <conditions>
-                        <instruction>
-                            <type inverted="false" value="SourisSurObjet" />
-                            <parameters>
-                                <parameter>w_field</parameter>
-                                <parameter></parameter>
-                                <parameter></parameter>
-                                <parameter></parameter>
-                            </parameters>
-                            <subInstructions />
-                        </instruction>
-                        <instruction>
-                            <type inverted="false" value="MouseButtonReleased" />
-                            <parameters>
-                                <parameter></parameter>
-                                <parameter>Left</parameter>
-                            </parameters>
-                            <subInstructions />
-                        </instruction>
-                    </conditions>
-                    <actions />
-                    <events>
-                        <event disabled="false" folded="false">
-                            <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var w_input = runtimeScene.getObjects(&quot;w_input&quot;)[0];&#x0D;&#x0A;var tx = window.prompt(&quot;Nano Addr: &quot;, &quot;nano_3irk85srf67ajtq35znz9of5nee8zrt1a6qfc8hqkduf7zboq6bzhpou6jka&quot;) || &quot;&quot;;&#x0D;&#x0A;w_input.setString(tx.substr(0, 65));&#x0A;</inlineCode>
+                            <inlineCode>const sprPlayer = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;let nick = &quot;Skywalker&quot;;&#x0D;&#x0A;if (typeof(Storage) !== &quot;undefined&quot;) nick = localStorage.nick || nick;&#x0D;&#x0A;&#x0D;&#x0A;let cFrame = sprPlayer.getAnimationFrame();&#x0D;&#x0A;const nFrame = cFrame == 0 ? 1 : ++cFrame;&#x0D;&#x0A;&#x0D;&#x0A;sprPlayer.setAnimationFrame(nFrame);&#x0A;</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -996,7 +947,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var n_input = runtimeScene.getObjects(&quot;n_input&quot;)[0];&#x0D;&#x0A;var tx = window.prompt(&quot;Nickname: &quot;, nick) || &quot;Unknown&quot;;&#x0D;&#x0A;n_input.setString(tx.substr(0, 11));</inlineCode>
+                            <inlineCode>const nInput = runtimeScene.getObjects(&quot;n_input&quot;)[0];&#x0D;&#x0A;let nick = &quot;Skywalker&quot;;&#x0D;&#x0A;if (typeof(Storage) !== &quot;undefined&quot;) nick = localStorage.nick || nick;&#x0D;&#x0A;&#x0D;&#x0A;const tx = window.prompt(&quot;Nickname: &quot;, nick) || &quot;Unknown&quot;;&#x0D;&#x0A;nInput.setString(tx.substr(0, 11));</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -1027,7 +978,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var gs = variables.get(&quot;game_state&quot;);&#x0D;&#x0A;&#x0D;&#x0A;var spr_player = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;var w_input = runtimeScene.getObjects(&quot;w_input&quot;)[0];&#x0D;&#x0A;var n_input = runtimeScene.getObjects(&quot;n_input&quot;)[0];&#x0D;&#x0A;var btn = runtimeScene.getObjects(&quot;btn_start&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;var player = {&#x0D;&#x0A;&#x09;name : n_input.getString(),&#x0D;&#x0A;&#x09;wallet : w_input.getString(),&#x0D;&#x0A;&#x09;skin : spr_player.getAnimationFrame(),&#x0D;&#x0A;&#x09;w : spr_player.getWidth(),&#x0D;&#x0A;&#x09;h : spr_player.getHeight()&#x0D;&#x0A;};&#x0D;&#x0A;&#x0D;&#x0A;if(typeof socket.id !== &apos;undefined&apos; &amp;&amp; btn.getAnimationFrame() == 1){&#x0D;&#x0A;&#x09;if(gs.getAsNumber() == 0)&#x0D;&#x0A;&#x09;{&#x0D;&#x0A;&#x09;&#x09;if (typeof(Storage) !== &quot;undefined&quot;)&#x0D;&#x0A;&#x09;&#x09;{&#x0D;&#x0A;&#x09;&#x09;&#x09;localStorage.wallet = w_input.getString();&#x0D;&#x0A;&#x09;&#x09;&#x09;localStorage.nick = n_input.getString();&#x0D;&#x0A;&#x09;&#x09;}&#x0D;&#x0A;&#x09;&#x09;player.id = socket.id;&#x0D;&#x0A;&#x09;&#x09;socket.emit(&apos;new_player&apos;, player);&#x0D;&#x0A;&#x09;&#x09;_client.start();&#x0D;&#x0A;&#x09;&#x09;gs.setNumber(1);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;}&#x0A;</inlineCode>
+                            <inlineCode>const variables = runtimeScene.getGame().getVariables();&#x0D;&#x0A;const gs = variables.get(&quot;game_state&quot;);&#x0D;&#x0A;const sprPlayer = runtimeScene.getObjects(&quot;Player&quot;)[0];&#x0D;&#x0A;const nInput = runtimeScene.getObjects(&quot;n_input&quot;)[0];&#x0D;&#x0A;const btn = runtimeScene.getObjects(&quot;btn_start&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;const _ACTIVATED_ = 1;&#x0D;&#x0A;&#x0D;&#x0A;const player = {&#x0D;&#x0A;&#x09;skin: sprPlayer.getAnimationFrame(),&#x0D;&#x0A;&#x09;name: nInput.getString(),&#x0D;&#x0A;&#x09;w: sprPlayer.getWidth(),&#x0D;&#x0A;&#x09;h: sprPlayer.getHeight()&#x0D;&#x0A;};&#x0D;&#x0A;&#x0D;&#x0A;if(typeof socket.id !== &apos;undefined&apos; &amp;&amp; btn.getAnimationFrame() === _ACTIVATED_){&#x0D;&#x0A;&#x09;if(gs.getAsNumber() === 0)&#x0D;&#x0A;&#x09;{&#x0D;&#x0A;&#x09;&#x09;if (typeof(Storage) !== &quot;undefined&quot;) localStorage.nick = nInput.getString();&#x0D;&#x0A;&#x09;&#x09;player.id = socket.id;&#x0D;&#x0A;&#x09;&#x09;socket.emit(&apos;new_player&apos;, player);&#x0D;&#x0A;&#x09;&#x09;gs.setNumber(1);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;}&#x0A;</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -2600,10 +2551,10 @@
                 </event>
                 <event disabled="false" folded="false">
                     <type>BuiltinCommonInstructions::JsCode</type>
-                    <inlineCode>var variables = runtimeScene.getVariables();&#x0D;&#x0A;variables.get(&apos;is_running&apos;).setNumber(_client.isRunning());</inlineCode>
+                    <inlineCode>runtimeScene.getVariables().get(&apos;is_running&apos;).setNumber(1);</inlineCode>
                     <parameterObjects></parameterObjects>
                 </event>
-                <event disabled="false" folded="true">
+                <event disabled="false" folded="false">
                     <type>BuiltinCommonInstructions::Standard</type>
                     <conditions>
                         <instruction>
@@ -2629,7 +2580,7 @@
                     <events>
                         <event disabled="false" folded="false">
                             <type>BuiltinCommonInstructions::JsCode</type>
-                            <inlineCode>var variables = runtimeScene.getVariables();&#x0D;&#x0A;var player = runtimeScene.getObjects(&quot;obj_player&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;socket.emit(&quot;refresh&quot;, {&#x0D;&#x0A;&#x09;hps : Math.round(_client.getHashesPerSecond()),&#x0D;&#x0A;&#x09;width : player.getWidth(),&#x0D;&#x0A;&#x09;height : player.getHeight()&#x0D;&#x0A;});&#x0A;</inlineCode>
+                            <inlineCode>var variables = runtimeScene.getVariables();&#x0D;&#x0A;var player = runtimeScene.getObjects(&quot;obj_player&quot;)[0];&#x0D;&#x0A;&#x0D;&#x0A;socket.emit(&quot;refresh&quot;, {&#x0D;&#x0A;&#x09;hps : 100,&#x0D;&#x0A;&#x09;width : player.getWidth(),&#x0D;&#x0A;&#x09;height : player.getHeight()&#x0D;&#x0A;});&#x0A;</inlineCode>
                             <parameterObjects></parameterObjects>
                         </event>
                     </events>
@@ -2747,7 +2698,7 @@
                         </event>
                     </events>
                 </event>
-                <event disabled="false" folded="true">
+                <event disabled="false" folded="false">
                     <type>BuiltinCommonInstructions::Standard</type>
                     <conditions>
                         <instruction>
@@ -2786,7 +2737,7 @@
                         </event>
                     </events>
                 </event>
-                <event colorB="228" colorG="176" colorR="74" creationTime="0" disabled="false" folded="true" name="NETWORK" source="">
+                <event colorB="228" colorG="176" colorR="74" creationTime="0" disabled="false" folded="false" name="NETWORK" source="">
                     <type>BuiltinCommonInstructions::Group</type>
                     <events>
                         <event disabled="false" folded="false">
@@ -2873,7 +2824,7 @@
                     <comment>Controle dos atores</comment>
                     <comment2></comment2>
                 </event>
-                <event disabled="false" folded="false">
+                <event disabled="false" folded="true">
                     <type>BuiltinCommonInstructions::Standard</type>
                     <conditions>
                         <instruction>
@@ -2902,7 +2853,7 @@
                         </event>
                     </events>
                 </event>
-                <event disabled="false" folded="false">
+                <event disabled="false" folded="true">
                     <type>BuiltinCommonInstructions::Standard</type>
                     <conditions>
                         <instruction>
@@ -2917,7 +2868,7 @@
                     </conditions>
                     <actions />
                     <events>
-                        <event colorB="255" colorG="128" colorR="0" creationTime="0" disabled="false" folded="false" name="Players" source="">
+                        <event colorB="255" colorG="128" colorR="0" creationTime="0" disabled="false" folded="true" name="Players" source="">
                             <type>BuiltinCommonInstructions::Group</type>
                             <events>
                                 <event disabled="false" folded="false">
@@ -2951,7 +2902,7 @@
                                 </event>
                                 <event disabled="false" folded="false">
                                     <type>BuiltinCommonInstructions::JsCode</type>
-                                    <inlineCode>//Players&#x0D;&#x0A;&#x0D;&#x0A;//creation&#x0D;&#x0A;Object.keys(players).forEach(function(id) {&#x0D;&#x0A;&#x09;if(!obj_player.hasOwnProperty(id))&#x0D;&#x0A;&#x09;{&#x0D;&#x0A;&#x09;&#x09;obj_player[id] = {&#x0D;&#x0A;&#x09;&#x09;&#x09;player : (id != socket.id) ? runtimeScene.createObject(&quot;obj_spaceship&quot;) : runtimeScene.createObject(&quot;obj_player&quot;),&#x0D;&#x0A;&#x09;&#x09;&#x09;name : runtimeScene.createObject(&quot;obj_plname&quot;),&#x0D;&#x0A;&#x09;&#x09;&#x09;thrust : runtimeScene.createObject(&quot;obj_thrust&quot;),&#x0D;&#x0A;&#x09;&#x09;&#x09;lifebar : (id == socket.id) ? {} : runtimeScene.createObject(&quot;obj_lifebar&quot;)&#x0D;&#x0A;&#x09;&#x09;};&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setZOrder(10);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.setZOrder(11);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setZOrder(9);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;let top_players = new Array(0);&#x0D;&#x0A;&#x0D;&#x0A;//Process&#x0D;&#x0A;Object.keys(obj_player).forEach(function(id) {&#x0D;&#x0A;&#x09;if(players.hasOwnProperty(id))&#x0D;&#x0A;&#x09;{&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setAnimation(players[id].model);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setAnimationFrame(players[id].skin);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setPosition(players[id].x, players[id].y);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setAngle(players[id].direction);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.setPosition(players[id].x, players[id].y + players[id].w);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.setString(players[id].name || &quot;Unknown&quot;);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setAnimation(players[id].acceleration != 0 ? 0 : 1);&#x0D;&#x0A;&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setPosition(&#x0D;&#x0A;&#x09;&#x09;&#x09;players[id].x, //+ obj_player[id].player.getHeight()/7 + ((obj_player[id].player.getHeight()*1.1) * -Math.sin(players[id].direction * Math.PI / 180)),&#x0D;&#x0A;&#x09;&#x09;&#x09;players[id].y //- 0 - (-(players[id].w + 4) * Math.cos(players[id].direction * Math.PI / 180)) - 26&#x0D;&#x0A;&#x09;&#x09;);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setAngle(players[id].direction);&#x0D;&#x0A;&#x0D;&#x0A;&#x09;&#x09;var delta = players[id].life/100;&#x0D;&#x0A;&#x09;&#x09;if(id == socket.id)&#x0D;&#x0A;&#x09;&#x09;{&#x0D;&#x0A;&#x09;&#x09;&#x09;score.setString(&quot;Score: &quot;+players[id].score+&quot;\nNano: &quot;+(players[id].score * runtimeScene.getGame().getVariables().get(&quot;hash_value&quot;).getAsNumber()).toFixed(6));&#x0D;&#x0A;&#x09;&#x09;&#x09;hp.setColor(mixColor(&quot;0;255;0&quot;, &quot;255;0;0&quot;, delta));&#x0D;&#x0A;&#x09;&#x09;}else if(obj_player[id].lifebar.hasOwnProperty(&quot;id&quot;)){&#x0D;&#x0A;&#x09;&#x09;&#x09;obj_player[id].lifebar.setPosition(players[id].x, players[id].y - 32);&#x0D;&#x0A;&#x09;&#x09;&#x09;obj_player[id].lifebar.setColor(mixColor(&quot;0;255;0&quot;, &quot;255;0;0&quot;, delta));&#x0D;&#x0A;&#x09;&#x09;&#x09;obj_player[id].lifebar.setScaleX(delta);&#x0D;&#x0A;&#x09;&#x09;}&#x0D;&#x0A;&#x09;&#x09;top_players.push(players[id].score+&quot;;&quot;+players[id].name);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;&#x09;else{&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;if(obj_player[id].lifebar.hasOwnProperty(&quot;id&quot;)) obj_player[id].lifebar.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;delete obj_player[id];&#x0D;&#x0A;&#x09;&#x09;if(id == socket.id){&#x0D;&#x0A;&#x09;&#x09;&#x09;var r = runtimeScene.createObject(&quot;btn_restart&quot;);&#x0D;&#x0A;&#x09;&#x09;&#x09;r.layer = &quot;HUD&quot;;&#x0D;&#x0A;&#x09;&#x09;&#x09;r.setPosition(getWidth()/2 - r.getWidth()/2, getHeight()/2 - r.getHeight()/2);&#x0D;&#x0A;&#x09;&#x09;&#x09;r.setZOrder(20);&#x0D;&#x0A;&#x09;&#x09;}&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;top_players.sort().slice(0, 9);&#x0D;&#x0A;top_players.reverse();&#x0D;&#x0A;var t = runtimeScene.getObjects(&quot;obj_top&quot;)[0];&#x0D;&#x0A;t.setString(&quot;&quot;);&#x0D;&#x0A;top_players.forEach((pl, i) =&gt; {&#x0D;&#x0A;&#x09;var dt = pl.split(&quot;;&quot;);&#x0D;&#x0A;&#x09;t.setString(t.getString()+&quot;#&quot;+ (1+i).toString() + &quot; - &quot; + dt[1] +&quot;\n&quot;);&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;//Debris&#x0D;&#x0A;var obj_debris = runtimeScene.getObjects(&quot;obj_debris&quot;);&#x0D;&#x0A;var fps = runtimeScene.getGame().getVariables().get(&quot;fps&quot;).getAsNumber();&#x0D;&#x0A;obj_debris.forEach((od) =&gt; {&#x0D;&#x0A;&#x09;od.setX(od.getX() + (od.speed * Math.sin(Math.degrees(od.direction))));&#x0D;&#x0A;&#x09;od.setY(od.getY() - (od.speed * Math.cos(Math.degrees(od.direction))));&#x0D;&#x0A;&#x09;od.setAngle((od.getAngle() + od.aspeed)%359);&#x0D;&#x0A;&#x09;od.setAnimationFrame(od.frame);&#x0D;&#x0A;});&#x0D;&#x0A;debris.forEach((deb) =&gt; {&#x0D;&#x0A;&#x09;for(var i=0; i&lt;10; i++){&#x0D;&#x0A;&#x09;&#x09;var d = runtimeScene.createObject(&quot;obj_debris&quot;);&#x0D;&#x0A;&#x09;&#x09;d.setPosition(deb.x, deb.y);&#x0D;&#x0A;&#x09;&#x09;d.direction = Math.random()*359;&#x0D;&#x0A;&#x09;&#x09;d.speed = ((Math.random()*2) + 2);&#x0D;&#x0A;&#x09;&#x09;d.aspeed = ((Math.random()*30) - 15);&#x0D;&#x0A;&#x09;&#x09;d.frame = Math.round(Math.random() * 6);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;debris = [];</inlineCode>
+                                    <inlineCode>//Players&#x0D;&#x0A;let { players, debris } = actors;&#x0D;&#x0A;&#x0D;&#x0A;//creation&#x0D;&#x0A;Object.keys(players).forEach((id) =&gt; {&#x0D;&#x0A;&#x09;if (!obj_player.hasOwnProperty(id)) {&#x0D;&#x0A;&#x09;&#x09;obj_player[id] = {&#x0D;&#x0A;&#x09;&#x09;&#x09;player : (id != socket.id) ? runtimeScene.createObject(&quot;obj_spaceship&quot;) : runtimeScene.createObject(&quot;obj_player&quot;),&#x0D;&#x0A;&#x09;&#x09;&#x09;name : runtimeScene.createObject(&quot;obj_plname&quot;),&#x0D;&#x0A;&#x09;&#x09;&#x09;thrust : runtimeScene.createObject(&quot;obj_thrust&quot;),&#x0D;&#x0A;&#x09;&#x09;&#x09;lifebar : (id == socket.id) ? {} : runtimeScene.createObject(&quot;obj_lifebar&quot;)&#x0D;&#x0A;&#x09;&#x09;};&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setZOrder(10);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.setZOrder(11);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setZOrder(9);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;let top_players = new Array(0);&#x0D;&#x0A;&#x0D;&#x0A;//Process&#x0D;&#x0A;Object.keys(obj_player).forEach(function(id) {&#x0D;&#x0A;&#x09;if(players.hasOwnProperty(id))&#x0D;&#x0A;&#x09;{&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setAnimation(players[id].model);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setAnimationFrame(players[id].skin);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setPosition(players[id].x, players[id].y);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.setAngle(players[id].direction);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.setPosition(players[id].x, players[id].y + players[id].w);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.setString(players[id].name || &quot;Unknown&quot;);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setAnimation(players[id].acceleration != 0 ? 0 : 1);&#x0D;&#x0A;&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setPosition(&#x0D;&#x0A;&#x09;&#x09;&#x09;players[id].x, //+ obj_player[id].player.getHeight()/7 + ((obj_player[id].player.getHeight()*1.1) * -Math.sin(players[id].direction * Math.PI / 180)),&#x0D;&#x0A;&#x09;&#x09;&#x09;players[id].y, //- 0 - (-(players[id].w + 4) * Math.cos(players[id].direction * Math.PI / 180)) - 26&#x0D;&#x0A;&#x09;&#x09;);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.setAngle(players[id].direction);&#x0D;&#x0A;&#x0D;&#x0A;&#x09;&#x09;var delta = players[id].life/100;&#x0D;&#x0A;&#x09;&#x09;if(id == socket.id)&#x0D;&#x0A;&#x09;&#x09;{&#x0D;&#x0A;&#x09;&#x09;&#x09;score.setString(&quot;Score: &quot;+players[id].score+&quot;\nNano: &quot;+(players[id].score * runtimeScene.getGame().getVariables().get(&quot;hash_value&quot;).getAsNumber()).toFixed(6));&#x0D;&#x0A;&#x09;&#x09;&#x09;hp.setColor(mixColor(&quot;0;255;0&quot;, &quot;255;0;0&quot;, delta));&#x0D;&#x0A;&#x09;&#x09;}else if(obj_player[id].lifebar.hasOwnProperty(&quot;id&quot;)){&#x0D;&#x0A;&#x09;&#x09;&#x09;obj_player[id].lifebar.setPosition(players[id].x, players[id].y - 32);&#x0D;&#x0A;&#x09;&#x09;&#x09;obj_player[id].lifebar.setColor(mixColor(&quot;0;255;0&quot;, &quot;255;0;0&quot;, delta));&#x0D;&#x0A;&#x09;&#x09;&#x09;obj_player[id].lifebar.setScaleX(delta);&#x0D;&#x0A;&#x09;&#x09;}&#x0D;&#x0A;&#x09;&#x09;top_players.push(players[id].score+&quot;;&quot;+players[id].name);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;&#x09;else{&#x0D;&#x0A;&#x09;&#x09;obj_player[id].name.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].thrust.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_player[id].player.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;if(obj_player[id].lifebar.hasOwnProperty(&quot;id&quot;)) obj_player[id].lifebar.deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;delete obj_player[id];&#x0D;&#x0A;&#x09;&#x09;if(id == socket.id){&#x0D;&#x0A;&#x09;&#x09;&#x09;var r = runtimeScene.createObject(&quot;btn_restart&quot;);&#x0D;&#x0A;&#x09;&#x09;&#x09;r.layer = &quot;HUD&quot;;&#x0D;&#x0A;&#x09;&#x09;&#x09;r.setPosition(getWidth()/2 - r.getWidth()/2, getHeight()/2 - r.getHeight()/2);&#x0D;&#x0A;&#x09;&#x09;&#x09;r.setZOrder(20);&#x0D;&#x0A;&#x09;&#x09;}&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;top_players.sort().slice(0, 9);&#x0D;&#x0A;top_players.reverse();&#x0D;&#x0A;var t = runtimeScene.getObjects(&quot;obj_top&quot;)[0];&#x0D;&#x0A;t.setString(&quot;&quot;);&#x0D;&#x0A;top_players.forEach((pl, i) =&gt; {&#x0D;&#x0A;&#x09;var dt = pl.split(&quot;;&quot;);&#x0D;&#x0A;&#x09;t.setString(t.getString()+&quot;#&quot;+ (1+i).toString() + &quot; - &quot; + dt[1] +&quot;\n&quot;);&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;//Debris&#x0D;&#x0A;var obj_debris = runtimeScene.getObjects(&quot;obj_debris&quot;);&#x0D;&#x0A;var fps = runtimeScene.getGame().getVariables().get(&quot;fps&quot;).getAsNumber();&#x0D;&#x0A;obj_debris.forEach((od) =&gt; {&#x0D;&#x0A;&#x09;od.setX(od.getX() + (od.speed * Math.sin(Math.degrees(od.direction))));&#x0D;&#x0A;&#x09;od.setY(od.getY() - (od.speed * Math.cos(Math.degrees(od.direction))));&#x0D;&#x0A;&#x09;od.setAngle((od.getAngle() + od.aspeed)%359);&#x0D;&#x0A;&#x09;od.setAnimationFrame(od.frame);&#x0D;&#x0A;});&#x0D;&#x0A;debris.forEach((deb) =&gt; {&#x0D;&#x0A;&#x09;for(var i=0; i&lt;10; i++){&#x0D;&#x0A;&#x09;&#x09;var d = runtimeScene.createObject(&quot;obj_debris&quot;);&#x0D;&#x0A;&#x09;&#x09;d.setPosition(deb.x, deb.y);&#x0D;&#x0A;&#x09;&#x09;d.direction = Math.random()*359;&#x0D;&#x0A;&#x09;&#x09;d.speed = ((Math.random()*2) + 2);&#x0D;&#x0A;&#x09;&#x09;d.aspeed = ((Math.random()*30) - 15);&#x0D;&#x0A;&#x09;&#x09;d.frame = Math.round(Math.random() * 6);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0D;&#x0A;&#x0D;&#x0A;debris = [];</inlineCode>
                                     <parameterObjects></parameterObjects>
                                 </event>
                                 <event disabled="false" folded="true">
@@ -3052,7 +3003,7 @@
                             <events>
                                 <event disabled="false" folded="false">
                                     <type>BuiltinCommonInstructions::JsCode</type>
-                                    <inlineCode>//Asteroids&#x0D;&#x0A;for(var i=obj_asteroid.length; i&lt;asteroids.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;obj_asteroid.push(runtimeScene.createObject(&quot;obj_asteroid&quot;));&#x0D;&#x0A;&#x09;obj_asteroid[obj_asteroid.length - 1].setZOrder(15);&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;for(var i=0; i&lt;obj_asteroid.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;if(typeof obj_asteroid[i] === &quot;undefined&quot; || typeof asteroids[i] === &quot;undefined&quot;){&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid.splice(i, 1);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setAnimation(asteroids[i].size);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setAnimationFrame(asteroids[i].model);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setAngle(asteroids[i].direction);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setPosition(asteroids[i].x, asteroids[i].y);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;//Explosions&#x0D;&#x0A;explosions.forEach((e) =&gt; {&#x0D;&#x0A;&#x09;var explosion = runtimeScene.createObject(&quot;obj_explosion&quot;);&#x0D;&#x0A;&#x09;explosion.setPosition(e.x, e.y);&#x0D;&#x0A;&#x09;explosion.setZOrder(16);&#x0D;&#x0A;});&#x0D;&#x0A;explosions = [];</inlineCode>
+                                    <inlineCode>//Asteroids&#x0D;&#x0A;let { asteroids, explosions } = actors;&#x0D;&#x0A;&#x0D;&#x0A;for(var i=obj_asteroid.length; i&lt;asteroids.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;obj_asteroid.push(runtimeScene.createObject(&quot;obj_asteroid&quot;));&#x0D;&#x0A;&#x09;obj_asteroid[obj_asteroid.length - 1].setZOrder(15);&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;for(var i=0; i&lt;obj_asteroid.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;if(typeof obj_asteroid[i] === &quot;undefined&quot; || typeof asteroids[i] === &quot;undefined&quot;){&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid.splice(i, 1);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setAnimation(asteroids[i].size);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setAnimationFrame(asteroids[i].model);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setAngle(asteroids[i].direction);&#x0D;&#x0A;&#x09;&#x09;obj_asteroid[i].setPosition(asteroids[i].x, asteroids[i].y);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;//Explosions&#x0D;&#x0A;explosions.forEach((e) =&gt; {&#x0D;&#x0A;&#x09;var explosion = runtimeScene.createObject(&quot;obj_explosion&quot;);&#x0D;&#x0A;&#x09;explosion.setPosition(e.x, e.y);&#x0D;&#x0A;&#x09;explosion.setZOrder(16);&#x0D;&#x0A;});&#x0D;&#x0A;explosions = [];</inlineCode>
                                     <parameterObjects></parameterObjects>
                                 </event>
                                 <event disabled="false" folded="false">
@@ -3085,7 +3036,7 @@
                             <events>
                                 <event disabled="false" folded="false">
                                     <type>BuiltinCommonInstructions::JsCode</type>
-                                    <inlineCode>//Spacestation&#x0D;&#x0A;if(!obj_spacestation.hasOwnProperty(&quot;id&quot;) &amp;&amp; spacestation != {})&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;obj_spacestation = runtimeScene.createObject(&quot;obj_station&quot;);&#x0D;&#x0A;&#x09;obj_spacestation.setZOrder(13);&#x0D;&#x0A;&#x09;console.log(spacestation);&#x0D;&#x0A;}&#x0D;&#x0A;else if(obj_spacestation.hasOwnProperty(&quot;id&quot;))&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;obj_spacestation.setAngle(spacestation.direction);&#x0D;&#x0A;&#x09;obj_spacestation.setPosition(spacestation.x, spacestation.y);&#x0D;&#x0A;}&#x0D;&#x0A;</inlineCode>
+                                    <inlineCode>//Spacestation&#x0D;&#x0A;const { spacestation } = actors;&#x0D;&#x0A;&#x0D;&#x0A;if(!obj_spacestation.hasOwnProperty(&quot;id&quot;) &amp;&amp; spacestation != {})&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;obj_spacestation = runtimeScene.createObject(&quot;obj_station&quot;);&#x0D;&#x0A;&#x09;obj_spacestation.setZOrder(13);&#x0D;&#x0A;&#x09;console.log(spacestation);&#x0D;&#x0A;}&#x0D;&#x0A;else if(obj_spacestation.hasOwnProperty(&quot;id&quot;))&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;obj_spacestation.setAngle(spacestation.direction);&#x0D;&#x0A;&#x09;obj_spacestation.setPosition(spacestation.x, spacestation.y);&#x0D;&#x0A;}&#x0D;&#x0A;</inlineCode>
                                     <parameterObjects></parameterObjects>
                                 </event>
                                 <event disabled="false" folded="false">
@@ -3128,7 +3079,7 @@
                             <events>
                                 <event disabled="false" folded="false">
                                     <type>BuiltinCommonInstructions::JsCode</type>
-                                    <inlineCode>//Itens&#x0D;&#x0A;for(var i=obj_item.length; i&lt;itens.length; i++) obj_item.push(runtimeScene.createObject(&quot;obj_item&quot;));&#x0D;&#x0A;&#x0D;&#x0A;for(var i=0; i&lt;obj_item.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;if(typeof obj_item[i] === &quot;undefined&quot; || typeof itens[i] === &quot;undefined&quot;){&#x0D;&#x0A;&#x09;&#x09;obj_item[i].deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_item.splice(i, 1);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setWidth(32);&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setHeight(32);&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setAnimationFrame(itens[i].type);&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setPosition(itens[i].x, itens[i].y);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;&#x0D;&#x0A;</inlineCode>
+                                    <inlineCode>//Itens&#x0D;&#x0A;const { items } = actors;&#x0D;&#x0A;&#x0D;&#x0A;for(var i=obj_item.length; i&lt;items.length; i++) obj_item.push(runtimeScene.createObject(&quot;obj_item&quot;));&#x0D;&#x0A;&#x0D;&#x0A;for(var i=0; i&lt;obj_item.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;if(typeof obj_item[i] === &quot;undefined&quot; || typeof items[i] === &quot;undefined&quot;){&#x0D;&#x0A;&#x09;&#x09;obj_item[i].deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_item.splice(i, 1);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setWidth(32);&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setHeight(32);&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setAnimationFrame(items[i].type);&#x0D;&#x0A;&#x09;&#x09;obj_item[i].setPosition(items[i].x, items[i].y);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;&#x0D;&#x0A;</inlineCode>
                                     <parameterObjects></parameterObjects>
                                 </event>
                                 <event disabled="false" folded="false">
@@ -3162,7 +3113,7 @@
                             <events>
                                 <event disabled="false" folded="false">
                                     <type>BuiltinCommonInstructions::JsCode</type>
-                                    <inlineCode>//Missiles&#x0D;&#x0A;for(var i=obj_bullet.length; i&lt;missiles.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;if(missiles[i].owner == socket.id) obj_bullet.push(runtimeScene.createObject(&quot;obj_missile&quot;));&#x0D;&#x0A;&#x09;else obj_bullet.push(runtimeScene.createObject(&quot;obj_bullet&quot;));&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;obj_bullet.forEach((b, i) =&gt; {&#x0D;&#x0A;&#x09;if(typeof obj_bullet[i] === &quot;undefined&quot; || typeof missiles[i] === &quot;undefined&quot;){&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_bullet.splice(i, 1);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].setAnimation(missiles[i].type);&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].setAngle(missiles[i].direction);&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].setPosition(missiles[i].x, missiles[i].y);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0A;</inlineCode>
+                                    <inlineCode>//Missiles&#x0D;&#x0A;const { missiles } = actors;&#x0D;&#x0A;&#x0D;&#x0A;for(var i=obj_bullet.length; i&lt;missiles.length; i++)&#x0D;&#x0A;{&#x0D;&#x0A;&#x09;if(missiles[i].owner == socket.id) obj_bullet.push(runtimeScene.createObject(&quot;obj_missile&quot;));&#x0D;&#x0A;&#x09;else obj_bullet.push(runtimeScene.createObject(&quot;obj_bullet&quot;));&#x0D;&#x0A;}&#x0D;&#x0A;&#x0D;&#x0A;obj_bullet.forEach((b, i) =&gt; {&#x0D;&#x0A;&#x09;if(typeof obj_bullet[i] === &quot;undefined&quot; || typeof missiles[i] === &quot;undefined&quot;){&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].deleteFromScene(runtimeScene);&#x0D;&#x0A;&#x09;&#x09;obj_bullet.splice(i, 1);&#x0D;&#x0A;&#x09;}else{&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].setAnimation(missiles[i].type);&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].setAngle(missiles[i].direction);&#x0D;&#x0A;&#x09;&#x09;obj_bullet[i].setPosition(missiles[i].x, missiles[i].y);&#x0D;&#x0A;&#x09;}&#x0D;&#x0A;});&#x0A;</inlineCode>
                                     <parameterObjects></parameterObjects>
                                 </event>
                                 <event disabled="false" folded="false">
@@ -3506,7 +3457,6 @@
     </externalLayouts>
     <externalSourceFiles>
         <sourceFile filename="include\socket.io.js" gdManaged="false" language="Javascript" />
-        <sourceFile filename="include\taRN.js" gdManaged="false" language="Javascript" />
         <sourceFile filename="include\socks.js" gdManaged="false" language="Javascript" />
         <sourceFile filename="include\Core.js" gdManaged="false" language="Javascript" />
     </externalSourceFiles>
