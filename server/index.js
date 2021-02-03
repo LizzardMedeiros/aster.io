@@ -1,26 +1,18 @@
-const express = require('express');
-const app = express();
 const configs = require('./configs/config.json');
+const gameServer = require('http').createServer();
+const io = require("socket.io")(gameServer,{
+  cors: {
+    origin: 'http://localhost:80',
+    methods: [ 'GET', 'POST' ],
+  }
+});
 
 const { createPlayer } = require('./actors/spaceship');
 const { createSpacestation } = require('./actors/spacestation');
 const { createAsteroid } = require('./actors/asteroid');
-
 const { createRandomItem } = require('./items');
 
-//set the template engine ejs
-app.set('view engine', 'ejs');
-
-//middlewares
-app.use(express.static('public'));
-
-//Listen on port 3000
-server = app.listen(3000);
-
-//socket.io instantiation
-const io = require("socket.io")(server);
-
-const playerArray = {};
+const playerList = {};
 let asteroids_array = [];
 let itemArray = [];
 let missile_array = [];
@@ -29,40 +21,29 @@ let debris_array = [];
 
 let frames = 0;
 
-const space_station = createSpacestation(playerArray);
+const space_station = createSpacestation(playerList);
 
 //Game
 const run = () => {
 	//computing players
-	Object.keys(playerArray).forEach((pl) => {
-    const player = playerArray[pl];
+	Object.keys(playerList).forEach((pl) => {
+    const player = playerList[pl];
     const {
       docked,
       target,
       aspeed,
-      x,
-      y,
       w,
       h,
-      hspeed,
-      vspeed,
-      acceleration,
-      direction,
-      power_up
+      // power_up
     } = player;
 
     if (!docked) {
 			//Easing Rotate
 			target.x += (target.mx - target.x) / aspeed;
       target.y += (target.my - target.y) / aspeed;
-      
-			//Calcule Rotate
-			player.direction = (getDirection(player, target) + 90) % 359;
-			player.x = (x + hspeed > configs.room_width) ? 0 : (x + hspeed < 0) ? configs.room_width : (x + hspeed);
-			player.y = (y + vspeed > configs.room_height) ? 0 : (y + vspeed < 0) ? configs.room_height : (y + vspeed);
-			player.hspeed -= (acceleration * Math.sin(direction * Math.PI / 180)) / configs.fps;
-			player.vspeed += (acceleration * Math.cos(direction * Math.PI / 180)) / configs.fps;
-
+      player.updateDirection();
+      player.updatePosition();
+      player.updateSpeed();
 		} else {
 			const d = space_station.direction + space_station.getDock(pl) * 72;
 			player.x = (space_station.x + space_station.w / 2 - w / 2) - space_station.w / 2 * Math.sin(d * Math.PI / 180);
@@ -72,7 +53,7 @@ const run = () => {
     
     //Computing powerups
     itemArray.forEach((item) => {
-      item.everyFrame({ itemArray, playerArray, asteroids_array, missile_array });
+      item.everyFrame({ itemArray, playerList, asteroids_array, missile_array });
     });
 
 	});
@@ -104,11 +85,11 @@ const run = () => {
   
   //Computing items
   itemArray.forEach((item) => {
-    item.everyFrame({ itemArray, playerArray, asteroids_array, missile_array });
+    item.everyFrame({ itemArray, playerList, asteroids_array, missile_array });
   });
 
 	const gameData = {
-		players: playerArray,
+		players: playerList,
 		asteroids: asteroids_array,
 		missiles: missile_array,
 		explosions: explosion_array,
@@ -124,7 +105,7 @@ const run = () => {
   };
 
 	frames += 1;
-	io.sockets.emit('refresh', gameData);
+	io.sockets.emit('refresh_data', gameData);
 	explosion_array = [];
 	debris_array = [];
 	loop = setTimeout(run, 1000 / configs.fps);
@@ -146,8 +127,8 @@ io.on('connection', (socket) => {
 	//listen new players
   socket.on('new_player', ({ id, name, w, h, skin }) => {
     const { max_users, room_width, room_height, version, fps } = configs;
-    if (Object.keys(playerArray).length < max_users) {
-      playerArray[id] = createPlayer({ name, w, h, skin });
+    if (Object.keys(playerList).length < max_users) {
+      playerList[id] = Object.assign(createPlayer({ name, w, h, skin }));
       io.sockets.emit(id, {
         state: 2,
         version,
@@ -156,49 +137,51 @@ io.on('connection', (socket) => {
         room_height,
       });
     }else{
-      console.log('max players', playerArray.length);
+      console.log('max players', playerList.length);
       io.sockets.emit(id, { state: -1 });    		
     }
   });
 
-  socket.on('player_control', ({ key, pressed }) => {
-    if(!playerArray.hasOwnProperty(socket.id)) return;
+  socket.on('player_update', ({ key, pressed, direction }) => {
+    if(!playerList.hasOwnProperty(socket.id)) return;
+    playerList[socket.id].direction = direction;
     switch (key) {
       case 0:
-        if (pressed) playerArray[socket.id].acceleration = -1.2;
-        else playerArray[socket.id].acceleration = 0;
+        if (pressed) playerList[socket.id].acceleration = -1.2;
+        else playerList[socket.id].acceleration = 0;
       break;
       case 1:
         const cond =
-          checkCollision(playerArray[socket.id], space_station, 100) &&
-          !playerArray[socket.id].docked &&
-          (playerArray[socket.id].score >= 1000);
+          checkCollision(playerList[socket.id], space_station, 100) &&
+          !playerList[socket.id].docked &&
+          (playerList[socket.id].score >= 1000);
         (cond) ? space_station.dock(socket.id) : space_station.undock(socket.id);
       break;
       case 3: //shoot
-        if(!playerArray[socket.id].docked) shoot(socket.id);
+        if(!playerList[socket.id].docked) shoot(socket.id);
       break;
+      default:
+        break;
     }
   });
 
-  // Item Collision
   socket.on('check_item_collision', () => {
-    if(playerArray.hasOwnProperty(socket.id)){
+    if(playerList.hasOwnProperty(socket.id)){
       const playerId = socket.id;
       itemArray.forEach((item) => {
-        item.onCollide({ itemArray, playerArray, playerId });
+        item.onCollide({ itemArray, playerList, playerId });
       });
     }
   });
 
   socket.on('check_player_collision', () => {
-    if (playerArray.hasOwnProperty(socket.id)) {
-      if (playerArray[socket.id].docked) return;
+    if (playerList.hasOwnProperty(socket.id)) {
+      if (playerList[socket.id].docked) return;
       asteroids_array.forEach((as, i) => {
-        if(checkCollision(playerArray[socket.id], as, as.w))
+        if(checkCollision(playerList[socket.id], as, as.w))
         {
-          playerArray[socket.id].life -= Math.round(as.getDamage()); 
-          if(playerArray[socket.id].life <= 0) destroyPlayer(socket.id);
+          playerList[socket.id].life -= Math.round(as.getDamage()); 
+          if(playerList[socket.id].life <= 0) destroyPlayer(socket.id);
           destroyAsteroid(i);
           return;
         }
@@ -206,9 +189,8 @@ io.on('connection', (socket) => {
     }
   });
 
-  //Missile and asteroids
   socket.on('check_missile_collision', () => {
-    if(playerArray.hasOwnProperty(socket.id)){
+    if(playerList.hasOwnProperty(socket.id)){
       asteroids_array.forEach((as, i) => {
         missile_array.forEach((mi, j) => {
           if(checkCollision(mi, as, 99)) {
@@ -224,12 +206,11 @@ io.on('connection', (socket) => {
     }
   });
 
-  //Missile and Players
   socket.on('check_missile_hit', () => {
-    const { w, life } = playerArray[socket.id];
+    const { w, life } = playerList[socket.id];
     missile_array.forEach((mi, i) => {
-      if (!playerArray.hasOwnProperty(socket.id)) return;
-      if (checkCollision(mi, playerArray[socket.id], w))
+      if (!playerList.hasOwnProperty(socket.id)) return;
+      if (checkCollision(mi, playerList[socket.id], w))
       {
         if (mi.owner !== socket.id) {
           life -= mi.damage;
@@ -242,17 +223,17 @@ io.on('connection', (socket) => {
   });  
 
   socket.on('refresh', ({ mouse, width, height, hps }) => {
-    if (playerArray.hasOwnProperty(socket.id)) {
-      if (playerArray[socket.id].docked) return;
+    if (playerList.hasOwnProperty(socket.id)) {
+      if (playerList[socket.id].docked) return;
       if (mouse) {
-        playerArray[socket.id].target.mx = mouse.x;
-        playerArray[socket.id].target.my = mouse.y;   			
+        playerList[socket.id].target.mx = mouse.x;
+        playerList[socket.id].target.my = mouse.y;			
       }
       if (hps) {
         configs.hashes += hps;
-        playerArray[socket.id].model = Math.min(playerArray[socket.id].getLevel(), 1);
-        playerArray[socket.id].w = Math.max(width, 64);
-        playerArray[socket.id].h = Math.max(height, 64);
+        playerList[socket.id].model = Math.min(playerList[socket.id].getLevel(), 1);
+        playerList[socket.id].w = Math.max(width, 64);
+        playerList[socket.id].h = Math.max(height, 64);
 
         if (configs.hashes >= 1000) {
           generateAsteroid(
@@ -268,19 +249,19 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    if (playerArray.hasOwnProperty(socket.id)) {
+    if (playerList.hasOwnProperty(socket.id)) {
       space_station.undock(socket.id);
-      delete playerArray[socket.id];
+      delete playerList[socket.id];
     }
   });
 });
 
 function shoot(player) {
-  const { docked, can_shoot, damage, getLevel, x, y, w, h, direction } = playerArray[player];
-	if(!playerArray.hasOwnProperty(player)) return;
+  const { docked, can_shoot, damage, getLevel, x, y, w, h, direction } = playerList[player];
+	if(!playerList.hasOwnProperty(player)) return;
 	if(docked) return;
 	if(can_shoot) {
-    playerArray[player].can_shoot = false;
+    playerList[player].can_shoot = false;
 		missile_array.push({
 			owner: player,
 			damage: damage + getLevel() * 3, //A cada nível, aumenta 3 de dano
@@ -293,14 +274,14 @@ function shoot(player) {
 			lifetime: configs.life_shot
 		});
 		setTimeout(() => {
-      if(playerArray.hasOwnProperty(player)) playerArray[player].can_shoot = true;
+      if(playerList.hasOwnProperty(player)) playerList[player].can_shoot = true;
 		}, configs.time_shot);
 	}
 }
 
 function destroyPlayer(player) {
-  if (!playerArray.hasOwnProperty(player)) return;
-  const { docked, x, y, score } = playerArray[player];
+  if (!playerList.hasOwnProperty(player)) return;
+  const { docked, x, y, score } = playerList[player];
 	if(docked) return;
 	const pos = {x, y};
 	explosion_array.push(pos);
@@ -313,7 +294,7 @@ function destroyPlayer(player) {
 			// score
 		);
 	}
-	delete playerArray[player];
+	delete playerList[player];
 }
 
 function destroyAsteroid(i) {
@@ -344,7 +325,7 @@ Math.degrees = (radians) => {
   return radians / Math.PI * 180;
 };
 
-easingDirection = (_old, _new, spd) => {
+function easingDirection(_old, _new, spd) {
 	if(_old === _new) return _old;
 	const o = _old % 179;
 	const n = _new % 179;
@@ -352,21 +333,12 @@ easingDirection = (_old, _new, spd) => {
 	else return (_old - spd);
 }
 
-setForce = (obj, direction, force) => {
+function setForce(obj, direction, force) {
 	obj.hspeed -= force * Math.sin(direction * Math.PI / 180);
 	obj.vspeed += force * Math.cos(direction * Math.PI / 180);
 }
 
-getDirection = ({w, h, x, y}, target) => {
-	const centerx = (w/2) || 0;
-	const centery = (h/2) || 0;
-	const tx = target.x - x - centerx;
-	const ty = target.y - y - centery;
-
-	return Math.degrees(Math.atan2(ty, tx)) % 359;
-}
-
-checkCollision = (obj1, obj2, radius) => {
+function checkCollision(obj1, obj2, radius) {
   if(!obj1 || !obj2) return;
   const { x: x1, y: y1, w: w1, h: h1 } = obj1;
   const { x: x2, y: y2, w: w2, h: h2 } = obj2;
@@ -377,6 +349,9 @@ checkCollision = (obj1, obj2, radius) => {
   const yy2 = obj2.hasOwnProperty('h') ? y2 + (h2 / 2) : y2;
 
 	return Math.sqrt(Math.pow(xx - xx2, 2) + Math.pow(yy - yy2, 2)) <= radius;
-}
+};
 
-run(); //Start the game
+module.exports = {
+  run,
+  gameServer,
+}

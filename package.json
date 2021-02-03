@@ -1,0 +1,33 @@
+{
+  "name": "aster.io",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LizzardMedeiros/aster.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LizzardMedeiros/aster.io/issues"
+  },
+  "homepage": "https://github.com/LizzardMedeiros/aster.io#readme",
+  "dependencies": {
+    "axios": "^0.19.1",
+    "cors": "^2.8.5",
+    "crypto-js": "^3.1.9-1",
+    "dotenv": "^8.2.0",
+    "express": "^4.16.2",
+    "nodemon": "^1.14.3",
+    "package_name": "^1.0.2",
+    "phaser": "^3.52.0",
+    "querystring": "^0.2.0",
+    "socket.io": "^2.0.4"
+  }
+}
