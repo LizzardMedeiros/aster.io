@@ -15,7 +15,7 @@ const config = {
 const gameBuffer = {
   player: {},
   keys: {},
-  asteroids: [],
+  asteroids: {},
 };
 
 const game = new Phaser.Game(config);
@@ -33,7 +33,7 @@ function create () {
   gameBuffer.keys.thrust = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
   gameBuffer.keys.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   gameBuffer.keys.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-
+  gameBuffer.asteroids = this.add.group();
   // Sockets
   socket.on(socket.id, (server) => {
     const { room_width, room_height } = server;
@@ -48,7 +48,7 @@ function create () {
   });
 
   socket.on('refresh_data', (data) => {
-    gameBuffer.asteroids = data.asteroids;
+    gameBuffer.asteroids = { ...gameBuffer.asteroids, queue: data.asteroids };
     gameBuffer.player = { ...gameBuffer.player, ...data.players[socket.id] };
   });
 }
