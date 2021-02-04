@@ -1,6 +1,6 @@
 const configs = require('./configs/config.json');
 const gameServer = require('http').createServer();
-const io = require("socket.io")(gameServer,{
+const io = require('socket.io')(gameServer,{
   cors: {
     origin: 'http://localhost:80',
     methods: [ 'GET', 'POST' ],
@@ -71,8 +71,8 @@ const run = () => {
 	asteroids_array.forEach(({ aspeed, hspeed, vspeed, x, y }, i) => {
     const asteroid = asteroids_array[i];
 		asteroid.direction += (aspeed/configs.fps);
-		asteroid.x = (x + hspeed > configs.room_width) ?  0 : (x + hspeed < 0) ? configs.room_width : (x + hspeed);
-		asteroid.y = (y + vspeed > configs.room_height) ?  0 : (y + vspeed < 0) ? configs.room_height : (y + vspeed);		
+		asteroid.x = (x + hspeed > configs.room_width) ? 0 : (x + hspeed < 0) ? configs.room_width : (x + hspeed);
+		asteroid.y = (y + vspeed > configs.room_height) ? 0 : (y + vspeed < 0) ? configs.room_height : (y + vspeed);		
 	});
 
 	//Computing missiles
@@ -222,28 +222,34 @@ io.on('connection', (socket) => {
     });
   });  
 
-  socket.on('refresh', ({ mouse, width, height, hps }) => {
-    if (playerList.hasOwnProperty(socket.id)) {
-      if (playerList[socket.id].docked) return;
-      if (mouse) {
-        playerList[socket.id].target.mx = mouse.x;
-        playerList[socket.id].target.my = mouse.y;			
-      }
-      if (hps) {
-        configs.hashes += hps;
-        playerList[socket.id].model = Math.min(playerList[socket.id].getLevel(), 1);
-        playerList[socket.id].w = Math.max(width, 64);
-        playerList[socket.id].h = Math.max(height, 64);
+  socket.on('refresh', ({ action, width, height, hps }) => {
+    if (!playerList.hasOwnProperty(socket.id)) return;
+    if (playerList[socket.id].docked) return;
+    /*
+    if (mouse) {
+      playerList[socket.id].target.mx = mouse.x;
+      playerList[socket.id].target.my = mouse.y;			
+    }
+    */
+    if (action.left) playerList[socket.id].aspeed -= configs.angular_acc;
+    if (action.right) playerList[socket.id].aspeed += configs.angular_acc;
+    if (action.thrust) {
+      playerList[socket.id].acceleration = configs.thrust_acc;
+    } else playerList[socket.id].acceleration = 0;
+    if (hps) {
+      configs.hashes += hps;
+      playerList[socket.id].model = Math.min(playerList[socket.id].getLevel(), 1);
+      playerList[socket.id].w = Math.max(width, 64);
+      playerList[socket.id].h = Math.max(height, 64);
 
-        if (configs.hashes >= 1000) {
-          generateAsteroid(
-            (configs.hashes/2),
-            0,
-            Math.random() * configs.room_width,
-            0
-          );
-          configs.hashes = 0;
-        }
+      if (configs.hashes >= 1000) {
+        generateAsteroid(
+          (configs.hashes/2),
+          0,
+          Math.random() * configs.room_width,
+          0
+        );
+        configs.hashes = 0;
       }
     }
   });

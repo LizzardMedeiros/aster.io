@@ -19,6 +19,7 @@ const createPlayer = ({
     vspeed: 0,
     hspeed: 0,
     aspeed: 0,
+    max_aspeed: 180,
     acceleration: 0,
     direction: 0,
     target: { x: 0, y: 0, mx: 0, my: 0 },
@@ -41,9 +42,15 @@ const createPlayer = ({
 			this.vspeed += (this.acceleration * Math.cos(this.direction * Math.PI / 180)) / fps;
     },
     updateDirection: function() {
-      const tx = this.target.mx - this.x + 0.5;
-      const ty = this.target.my - this.y + 0.5;
-      this.direction = (Math.degrees(Math.atan2(ty, tx)) + 90) % 359;
+      const { max_aspeed } = this;
+      if (this.aspeed > max_aspeed) this.aspeed = max_aspeed;
+      else if (this.aspeed < -max_aspeed) this.aspeed = -max_aspeed;
+      this.direction += this.aspeed;
+      /*
+        const tx = this.target.mx - this.x + 0.5;
+        const ty = this.target.my - this.y + 0.5;
+        this.direction = (Math.degrees(Math.atan2(ty, tx)) + 90) % 359;
+      */
     }
   }
 );

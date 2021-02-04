@@ -6,17 +6,16 @@ const config = {
   width: window.innerWidth,
   height: window.innerHeight,
   scene: {
-      preload,
-      create,
-      update,
+    preload,
+    create,
+    update,
   }
 };
 
-const gameData = {
+const gameBuffer = {
   player: {},
+  keys: {},
   asteroids: [],
-  mouseX: 0,
-  mouseY: 0,
 };
 
 const game = new Phaser.Game(config);
@@ -25,38 +24,36 @@ function preload () {
   console.log('Carregando...');
   this.load.image('background_space', `${URL}/assets?path=bgs/bg_fundo_espacial.png`);
   this.load.image('spr_player', `${URL}/assets?path=spaceships/flea.png`);
+  this.load.image('spr_asteroid', `${URL}/assets?path=asteroids/B0.png`);
 }
 
 function create () {
   console.log('Connected...');
-
-  this.input.on('pointermove', (mouse) => {
-    gameData.mouseX = mouse.worldX;
-    gameData.mouseY = mouse.worldY;
-  });
-
   createPlayer(socket)({ name: 'Lizzard' });
+  gameBuffer.keys.thrust = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+  gameBuffer.keys.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+  gameBuffer.keys.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 
   // Sockets
   socket.on(socket.id, (server) => {
     const { room_width, room_height } = server;
-    // this.cameras.main.setBounds(0, 0, window.innerWidth, window.innerHeight);
+    this.cameras.main.setBounds(0, 0, room_width, room_height);
     this.add
       .tileSprite(0, 0, room_width, room_height, 'background_space')
       .setOrigin(0);
-    gameData.player.sprite = this.add
+    gameBuffer.player.sprite = this.add
       .sprite(0, 0, 'spr_player')
       .setDepth(5);
-    this.cameras.main.startFollow(gameData.player.sprite);
+    this.cameras.main.startFollow(gameBuffer.player.sprite);
   });
 
   socket.on('refresh_data', (data) => {
-    gameData.player = { ...gameData.player, ...data.players[socket.id] };
-    // console.log(data.players[socket.id].direction);
+    gameBuffer.asteroids = data.asteroids;
+    gameBuffer.player = { ...gameBuffer.player, ...data.players[socket.id] };
   });
 }
 
 function update () {
-  updatePlayer(socket)(gameData);
-
+  updatePlayer(socket)(gameBuffer);
+  updateAsteroids(gameBuffer);
 }
