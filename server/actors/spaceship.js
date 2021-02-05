@@ -1,11 +1,29 @@
-const { room_width, room_height, fps } = require('../configs/config.json');
+const { fps, room_width, room_height } = require('../configs/config.json');
+const actor = require('./actor');
 
-const createPlayer = ({
+const createPlayer = ({name, w, h, skin}) => ({
+  ...actor,
   name,
   w,
   h,
+  x: Math.random() * room_width,
+  y: Math.random() * room_height,
   skin,
-}) => (
+  updateSpeed: function() {
+    this.hspeed -= (this.acceleration * Math.sin(this.direction * Math.PI / 180)) / fps;
+    this.vspeed += (this.acceleration * Math.cos(this.direction * Math.PI / 180)) / fps;
+  },
+  updateDirection: function() {
+    const { max_aspeed } = this;
+    if (this.aspeed > max_aspeed) this.aspeed = max_aspeed;
+    else if (this.aspeed < -max_aspeed) this.aspeed = -max_aspeed;
+    this.direction += this.aspeed;
+    // const tx = this.target.mx - this.x + 0.5;
+    // const ty = this.target.my - this.y + 0.5;
+    // this.direction = (Math.degrees(Math.atan2(ty, tx)) + 90) % 359;
+  },
+});
+/*
   {
     name,
     score: 0,
@@ -29,7 +47,12 @@ const createPlayer = ({
     listen: true,
     docked: false,
     power_up: [],
-    getLevel: function() { return Math.floor(this.score / 1000); },
+    getLevel: function () { return Math.floor(this.score / 1000); },
+    checkCollision: function (actor) {
+      if (!checkCollision(this, actor, Math.max(this.w, this.h))) return false;
+      this.life -= Math.round(actor.damage || 0); 
+      return true;
+    },
     updatePosition: function() {
       this.x = (this.x + this.hspeed > room_width)
         ? 0 : (this.x + this.hspeed < 0)
@@ -47,15 +70,15 @@ const createPlayer = ({
       if (this.aspeed > max_aspeed) this.aspeed = max_aspeed;
       else if (this.aspeed < -max_aspeed) this.aspeed = -max_aspeed;
       this.direction += this.aspeed;
-      /*
-        const tx = this.target.mx - this.x + 0.5;
-        const ty = this.target.my - this.y + 0.5;
-        this.direction = (Math.degrees(Math.atan2(ty, tx)) + 90) % 359;
-      */
+
+      // const tx = this.target.mx - this.x + 0.5;
+      // const ty = this.target.my - this.y + 0.5;
+      // this.direction = (Math.degrees(Math.atan2(ty, tx)) + 90) % 359;
+
     }
   }
 );
-
+*/
 module.exports = {
   createPlayer
 };

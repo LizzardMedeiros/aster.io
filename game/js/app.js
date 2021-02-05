@@ -64,6 +64,8 @@ function create () {
 }
 
 function update () {
+  //if (game.config.width !== window.innerWidth) game.config.width = window.innerWidth;
+  //if (game.config.height !== window.innerHeight) game.config.height = window.innerHeight;
   updatePlayer(socket)(gameBuffer);
   updateActor(gameBuffer.asteroids, gameBuffer.actors.asteroids)('spr_asteroid');
   updateActor(gameBuffer.missiles, gameBuffer.actors.missiles)('spr_missile');

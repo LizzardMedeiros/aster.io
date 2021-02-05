@@ -31,17 +31,13 @@ const run = () => {
     const player = playerList[pl];
     const {
       docked,
-      target,
-      aspeed,
       w,
       h,
       // power_up
     } = player;
 
     if (!docked) {
-			//Easing Rotate
-			target.x += (target.mx - target.x) / aspeed;
-      target.y += (target.my - target.y) / aspeed;
+      //Easing Rotate
       player.updateDirection();
       player.updatePosition();
       player.updateSpeed();
@@ -66,7 +62,8 @@ const run = () => {
 
 	//Computing asteroids
 	asteroids_array.forEach((asteroid) => {
-    asteroid.updatePosition();		
+    asteroid.updatePosition();
+    asteroid.updateDirection();		
 	});
 
 	//Computing missiles
@@ -105,8 +102,9 @@ const run = () => {
 
 const generateAsteroid = (val, size, x, y) => {
 	const { max_aster_count } = configs;
-	if(asteroids_array.length < max_aster_count)
-	asteroids_array.push(createAsteroid({ x, y, val, size }));
+	if (asteroids_array.length < max_aster_count) {
+    asteroids_array.push(createAsteroid({ x, y, val, size }));
+  }
 }
 
 //listen on every connection
@@ -120,7 +118,8 @@ io.on('connection', (socket) => {
   socket.on('new_player', ({ id, name, w, h, skin }) => {
     const { max_users, room_width, room_height, version, fps } = configs;
     if (Object.keys(playerList).length < max_users) {
-      playerList[id] = Object.assign(createPlayer({ name, w, h, skin }));
+      const newPlayer= createPlayer({ name, w, h, skin });
+      playerList[id] = newPlayer;
       io.sockets.emit(id, {
         state: 2,
         version,
@@ -166,18 +165,16 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('check_player_collision', () => {
+  socket.on('player_collision', () => {
     if (playerList.hasOwnProperty(socket.id)) {
       if (playerList[socket.id].docked) return;
-      asteroids_array.forEach((as, i) => {
-        if(checkCollision(playerList[socket.id], as, as.w))
-        {
-          playerList[socket.id].life -= Math.round(as.getDamage()); 
-          if(playerList[socket.id].life <= 0) destroyPlayer(socket.id);
+      for (let i = 0; i < asteroids_array.length; i++) {
+        if (playerList[socket.id].checkCollision(asteroids_array[i])) {
+          if (playerList[socket.id].life <= 0) destroyPlayer(socket.id);
           destroyAsteroid(i);
-          return;
+          break;
         }
-      });
+      }
     }
   });
 
@@ -229,7 +226,7 @@ io.on('connection', (socket) => {
     
     if (hps) {
       configs.hashes += hps;
-      playerList[socket.id].model = Math.min(playerList[socket.id].getLevel(), 1);
+      playerList[socket.id].model = 0;
       playerList[socket.id].w = Math.max(width, 64);
       playerList[socket.id].h = Math.max(height, 64);
 
@@ -292,12 +289,6 @@ function destroyAsteroid(i) {
 		for(let j=0; j<3; j++) generateAsteroid(val, sz, x, y);
 	}
 	explosion_array.push({x, y});
-	createItem(
-		x,
-		y,
-		// (Math.random() > 0.2) ? 0 : (Math.random() > 0.2) ? 3 : 2,
-		// value
-	);
 	asteroids_array.splice(i, 1);
 }
 

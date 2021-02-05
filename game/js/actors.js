@@ -10,7 +10,6 @@ const updateActor = (group, actor) => (sprite) => {
       typeof group.children.entries[i] === 'undefined' ||
       typeof actor[i] === 'undefined'
     ) {
-      console.log(group);
       group.killAndHide(group.children.entries[i]);
       group.children.delete(group.children.entries[i]);
     } else {

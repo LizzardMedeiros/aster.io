@@ -1,4 +1,4 @@
-const { checkCollision } = require('../phisics/');
+const { checkCollision } = require('../physics');
 // const { fps } = require('../configs/config.json');
 const item = require('./item');
 

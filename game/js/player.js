@@ -1,3 +1,16 @@
+const checkPlayerCollision = (gameBuffer) =>  {
+  const boundsPlayer = gameBuffer.player?.sprite.getBounds();
+  const asteroidArray = gameBuffer.asteroids?.children.entries;
+  const actorArray = [...asteroidArray];
+  for (i = 0; i < actorArray.length; i += 1) {
+    const boundsActor = actorArray[i].getBounds();
+    if (Phaser.Geom.Rectangle.Overlaps(boundsPlayer, boundsActor)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 const action = (keys) => ({
   left: keys.left && keys.left.isDown,
   right: keys.right && keys.right.isDown,
@@ -15,10 +28,15 @@ const createPlayer = (socket) => ({ name }) => {
   });
 };
 
-const updatePlayer = (socket) => ({ player, keys }) => {
+const updatePlayer = (socket) => (gameBuffer) => {
+  const { player, keys } = gameBuffer;
   if (!player.hasOwnProperty('name')) return;
   player.sprite.setPosition(player.x, player.y);
   player.sprite.setAngle(player.direction);
+  // Eventos
+  if (checkPlayerCollision(gameBuffer)) {
+    socket.emit('player_collision');
+  }
   socket.emit('refresh', {
     action: action(keys),
     width: 64,
