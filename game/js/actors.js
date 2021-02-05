@@ -27,7 +27,7 @@ const updateActor = (gameBuffer) => (sprite) => {
     }
   }
 
-  // Colision
+  // Global Collision
   Object
     .keys(gameBuffer)
     .filter(key => key.includes('Group'))
@@ -42,13 +42,9 @@ const updateActor = (gameBuffer) => (sprite) => {
             child.id !== self.id &&
             ((child.groupName !== self.groupName) || (child.collideGroup && self.collideGroup))
           ) {
-            console.log(child.id, self.id)
+            socket.emit('check_missile_collision');
           }
         });
       });
     });
-  // console.log(actorsInGame);
-/*   for (let i = 0; i < group.children.size; i++) {
-  } */
-
 };
