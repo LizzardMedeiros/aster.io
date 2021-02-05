@@ -16,8 +16,8 @@ const gameBuffer = {
   player: {},
   keys: {},
   actors: {},
-  asteroids: {},
-  missiles: {},
+  asteroidGroup: {},
+  missileGroup: {},
 };
 
 const game = new Phaser.Game(config);
@@ -40,8 +40,10 @@ function create () {
   gameBuffer.keys.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
   gameBuffer.keys.fire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
-  gameBuffer.asteroids = this.add.group();
-  gameBuffer.missiles = this.add.group();
+  gameBuffer.asteroidGroup = this.add.group();
+  gameBuffer.missileGroup = this.add.group();
+
+  console.log(gameBuffer.asteroidGroup)
 
   // Sockets
   socket.on(socket.id, (server) => {
@@ -67,6 +69,6 @@ function update () {
   //if (game.config.width !== window.innerWidth) game.config.width = window.innerWidth;
   //if (game.config.height !== window.innerHeight) game.config.height = window.innerHeight;
   updatePlayer(socket)(gameBuffer);
-  updateActor(gameBuffer.asteroids, gameBuffer.actors.asteroids)('spr_asteroid');
-  updateActor(gameBuffer.missiles, gameBuffer.actors.missiles)('spr_missile');
+  updateActor(gameBuffer)('spr_asteroid');
+  updateActor(gameBuffer)('spr_missile');
 }

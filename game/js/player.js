@@ -1,6 +1,6 @@
 const checkPlayerCollision = (gameBuffer) =>  {
   const boundsPlayer = gameBuffer.player?.sprite.getBounds();
-  const asteroidArray = gameBuffer.asteroids?.children.entries;
+  const asteroidArray = gameBuffer.asteroidGroup?.children.entries;
   const actorArray = [...asteroidArray];
   for (i = 0; i < actorArray.length; i += 1) {
     const boundsActor = actorArray[i].getBounds();

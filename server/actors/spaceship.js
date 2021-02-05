@@ -3,12 +3,14 @@ const actor = require('./actor');
 
 const createPlayer = ({name, w, h, skin}) => ({
   ...actor,
-  name,
-  w,
+  can_shoot: true,
+  projectileDeadline: 2, // in Seconds
   h,
+  name,
+  skin,
+  w,
   x: Math.random() * room_width,
   y: Math.random() * room_height,
-  skin,
   updateSpeed: function() {
     this.hspeed -= (this.acceleration * Math.sin(this.direction * Math.PI / 180)) / fps;
     this.vspeed += (this.acceleration * Math.cos(this.direction * Math.PI / 180)) / fps;

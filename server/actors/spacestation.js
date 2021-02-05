@@ -1,25 +1,17 @@
-const { room_width, room_height, fps } = require('../configs/config.json');
+const { room_width, room_height } = require('../configs/config.json');
+const actor = require('./actor');
 
 const createSpacestation = (players) => ({
+  ...actor,
 	x: Math.random() * room_width,
 	y: Math.random() * room_height,
 	w: 512,
 	h: 512,
-	direction: 0,
 	slots: [],
 	vault: {},
 	hspeed: -(Math.random() * 2) + 1,
 	vspeed: -(Math.random() * 2) + 1,
   aspeed: Math.random() * 15,
-  updatePosition: function () {
-    this.x = (this.x > room_width) ? -this.w :
-    (this.x + this.w < 0) ? room_width : (this.x + this.hspeed);
-    this.y = (this.y > room_height) ? -this.h :
-    (this.y + this.h < 0) ? room_height : (this.y + this.vspeed);
-  },
-  updateDirection: function () {
-    this.direction += this.aspeed / fps;
-  },
 	dock: function (player_id) {
 		if(!players.hasOwnProperty(player_id)) return;
 		this.slots.forEach(id => { if (id === player_id) return; });
