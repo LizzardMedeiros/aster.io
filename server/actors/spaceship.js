@@ -12,6 +12,7 @@ const createPlayer = ({
     life: 100,
     damage: 10,
     can_shoot: true,
+    life_shoot: 2,
     x: Math.random() * room_width,
     y: Math.random() * room_height,
     w,

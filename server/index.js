@@ -10,6 +10,7 @@ const io = require('socket.io')(gameServer,{
 const { createPlayer } = require('./actors/spaceship');
 const { createSpacestation } = require('./actors/spacestation');
 const { createAsteroid } = require('./actors/asteroid');
+const { createMissile } = require('./actors/missiles');
 const { createRandomItem } = require('./items');
 
 const playerList = {};
@@ -59,28 +60,19 @@ const run = () => {
 	});
 
 	//Computing spacestation
-	space_station.direction += space_station.aspeed / configs.fps;
-	space_station.direction = space_station.direction % 359;
-	space_station.x = (space_station.x > configs.room_width) ? -space_station.w :
-	(space_station.x + space_station.w < 0) ? configs.room_width : (space_station.x + space_station.hspeed);
-	space_station.y = (space_station.y > configs.room_height) ? -space_station.h :
-	(space_station.y + space_station.h < 0) ? configs.room_height : (space_station.y + space_station.vspeed);
+  space_station.updatePosition();
+  space_station.updateDirection();
 	space_station.processDocks();
 
 	//Computing asteroids
-	asteroids_array.forEach(({ aspeed, hspeed, vspeed, x, y }, i) => {
-    const asteroid = asteroids_array[i];
-		asteroid.direction += (aspeed/configs.fps);
-		asteroid.x = (x + hspeed > configs.room_width) ? 0 : (x + hspeed < 0) ? configs.room_width : (x + hspeed);
-		asteroid.y = (y + vspeed > configs.room_height) ? 0 : (y + vspeed < 0) ? configs.room_height : (y + vspeed);		
+	asteroids_array.forEach((asteroid) => {
+    asteroid.updatePosition();		
 	});
 
 	//Computing missiles
-	missile_array.forEach(({velocity, direction, created, lifetime }, i) => {
-    const missile = missile_array[i];
-		missile.x += (velocity * Math.sin(direction * Math.PI / 180)) / configs.fps;
-		missile.y -= (velocity * Math.cos(direction * Math.PI / 180)) / configs.fps;
-		if (frames > created + (lifetime * configs.fps)) missile_array.splice(i, 1);
+	missile_array.forEach((m, i) => {
+    m.updatePosition();
+    if (!m.isAlive(frames)) missile_array.splice(i, 1);
   });
   
   //Computing items
@@ -223,19 +215,18 @@ io.on('connection', (socket) => {
   });  
 
   socket.on('refresh', ({ action, width, height, hps }) => {
+    // Verify player
     if (!playerList.hasOwnProperty(socket.id)) return;
     if (playerList[socket.id].docked) return;
-    /*
-    if (mouse) {
-      playerList[socket.id].target.mx = mouse.x;
-      playerList[socket.id].target.my = mouse.y;			
-    }
-    */
+
+    // Player key trigger
     if (action.left) playerList[socket.id].aspeed -= configs.angular_acc;
     if (action.right) playerList[socket.id].aspeed += configs.angular_acc;
     if (action.thrust) {
       playerList[socket.id].acceleration = configs.thrust_acc;
     } else playerList[socket.id].acceleration = 0;
+    if (action.fire) shoot(socket.id);
+    
     if (hps) {
       configs.hashes += hps;
       playerList[socket.id].model = Math.min(playerList[socket.id].getLevel(), 1);
@@ -263,22 +254,12 @@ io.on('connection', (socket) => {
 });
 
 function shoot(player) {
-  const { docked, can_shoot, damage, getLevel, x, y, w, h, direction } = playerList[player];
+  const { docked, can_shoot } = playerList[player];
 	if(!playerList.hasOwnProperty(player)) return;
 	if(docked) return;
 	if(can_shoot) {
     playerList[player].can_shoot = false;
-		missile_array.push({
-			owner: player,
-			damage: damage + getLevel() * 3, //A cada nível, aumenta 3 de dano
-			type: (getLevel() === 1) ? 1 : 0,
-			x: x + (w / 2) + 26 * Math.sin(direction * Math.PI / 180),
-			y: y + (h / 2) - 26,
-			direction,
-			velocity: configs.speed_shot,
-			created: frames,
-			lifetime: configs.life_shot
-		});
+		missile_array.push(createMissile(playerList[player], frames));
 		setTimeout(() => {
       if(playerList.hasOwnProperty(player)) playerList[player].can_shoot = true;
 		}, configs.time_shot);

@@ -15,25 +15,34 @@ const config = {
 const gameBuffer = {
   player: {},
   keys: {},
+  actors: {},
   asteroids: {},
+  missiles: {},
 };
 
 const game = new Phaser.Game(config);
 
 function preload () {
   console.log('Carregando...');
+  // Assets
   this.load.image('background_space', `${URL}/assets?path=bgs/bg_fundo_espacial.png`);
   this.load.image('spr_player', `${URL}/assets?path=spaceships/flea.png`);
+  this.load.image('spr_missile', `${URL}/assets?path=missile/blue00.png`);
   this.load.image('spr_asteroid', `${URL}/assets?path=asteroids/B0.png`);
 }
 
 function create () {
   console.log('Connected...');
   createPlayer(socket)({ name: 'Lizzard' });
+  // Controls
   gameBuffer.keys.thrust = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
   gameBuffer.keys.left = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
   gameBuffer.keys.right = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+  gameBuffer.keys.fire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
   gameBuffer.asteroids = this.add.group();
+  gameBuffer.missiles = this.add.group();
+
   // Sockets
   socket.on(socket.id, (server) => {
     const { room_width, room_height } = server;
@@ -48,12 +57,14 @@ function create () {
   });
 
   socket.on('refresh_data', (data) => {
-    gameBuffer.asteroids = { ...gameBuffer.asteroids, queue: data.asteroids };
+    gameBuffer.actors.asteroids = data.asteroids;
+    gameBuffer.actors.missiles = data.missiles;
     gameBuffer.player = { ...gameBuffer.player, ...data.players[socket.id] };
   });
 }
 
 function update () {
   updatePlayer(socket)(gameBuffer);
-  updateAsteroids(gameBuffer);
+  updateActor(gameBuffer.asteroids, gameBuffer.actors.asteroids)('spr_asteroid');
+  updateActor(gameBuffer.missiles, gameBuffer.actors.missiles)('spr_missile');
 }

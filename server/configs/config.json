@@ -5,7 +5,7 @@
 	"max_aster_count": 50,
   "max_aster_spd": 100,
   "thrust_acc": -1.2,
-  "angular_acc": 0.05,
+  "angular_acc": 0.1,
 	"room_width": 5200,
 	"room_height": 5200,
 	"fps": 60,

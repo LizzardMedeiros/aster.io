@@ -1,4 +1,4 @@
-const { max_aster_spd, fps } = require('../configs/config.json');
+const { max_aster_spd, room_height, room_width, fps } = require('../configs/config.json');
 
 const createAsteroid = ({x, y, value, size}) => ({
   x,
@@ -13,7 +13,18 @@ const createAsteroid = ({x, y, value, size}) => ({
   vspeed: ((Math.random() * max_aster_spd * 2 ) - max_aster_spd) / fps,
   hspeed: ((Math.random() * max_aster_spd * 2 ) - max_aster_spd) / fps,
   aspeed: ((Math.random() * -180) + 90),
-  getDamage: function() { return Math.round(30 / (1 + this.size)); }
+  updatePosition: function () {
+    this.x = (this.x + this.hspeed > room_width)
+    ? 0 : (this.x + this.hspeed < 0)
+    ? room_width : (x + this.hspeed);
+    this.y = (this.y + this.vspeed > room_height)
+    ? 0 : (this.y + this.vspeed < 0)
+    ? room_height : (this.y + this.vspeed);
+  },
+  updateDirection: function () {
+    this.direction += (this.aspeed / fps);
+  },
+  getDamage: function () { return Math.round(30 / (1 + this.size)); }
 });
 
 module.exports = { createAsteroid };
